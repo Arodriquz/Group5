@@ -1,0 +1,199 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f4f7f6;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* GENERAL PAGE STYLING */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+}
+
+/* ================================= */
+/* LOGIN BACKGROUND */
+/* ================================= */
+
+.auth-background {
+  background-image: url('/images/farm-background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 650px;
+}
+
+/* ================================= */
+/* DASHBOARD HEADER BACKGROUND */
+/* ================================= */
+
+.dashboard-header {
+  background-image: url('/images/farmer-header-bg.jpg'); /* Ensure image is placed in your /public/images/ folder */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* ADJUST SIZE HERE */
+  min-height: 190px; /* Increase to make the header taller, or decrease (e.g. 100px) to make it shorter */
+  padding: 24px 16px; /* First number controls top/bottom padding */
+}
+
+/* ================================= */
+/* BACKGROUND OVERLAY */
+/* ================================= */
+
+.auth-overlay {
+  min-height: 650px;
+  background: rgba(0, 0, 0, 0.08); /* Darker backdrop overlay for background image contrast */
+  backdrop-filter: blur(1px);
+}
+
+/* ================================= */
+/* BRAND HEADER */
+/* ================================= */
+
+.auth-header {
+  position: relative;
+  text-align: center;
+  padding: 35px 20px 25px;
+  color: #ffffff;
+  background: rgba(15, 45, 30, 0.35); /* Stronger green header background */
+  backdrop-filter: blur(1px);
+}
+
+.auth-header h1 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  margin: 0;
+}
+
+.auth-header p {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f0fdf4;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  margin-top: 6px;
+}
+
+.auth-header-line {
+  width: 60px;
+  height: 4px;
+  margin: 16px auto 0;
+  border-radius: 10px;
+  background: #a5d6a7;
+}
+
+/* ================================= */
+/* FORM CONTENT */
+/* ================================= */
+
+.auth-content {
+  padding: 25px 24px 20px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(1px);
+}
+
+.auth-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 13px;
+  border: 1px solid rgba(209, 217, 210, 0.9);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.78);
+  color: #263b2d;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-input::placeholder {
+  color: #66736a;
+}
+
+.auth-input:focus {
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12);
+}
+
+/* ================================= */
+/* SUBMIT BUTTON */
+/* ================================= */
+
+.auth-submit-button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1b5e20, #0f3813);
+  color: white;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(27, 94, 32, 0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.auth-submit-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(27, 94, 32, 0.45);
+}
+
+/* ================================= */
+/* FOOTER */
+/* ================================= */
+
+.auth-footer {
+  padding: 14px;
+  text-align: center;
+  background: rgba(15, 45, 30, 0.95);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ================================= */
+/* MOBILE RESPONSIVENESS */
+/* ================================= */
+
+@media (max-width: 480px) {
+  .auth-content {
+    padding: 20px 16px;
+  }
+
+  .auth-background,
+  .auth-overlay {
+    min-height: 100vh;
+  }
+}
+
+/* ================================= */
+/* MAKE ALL FORM TEXT WHITE & SHARP */
+/* ================================= */
+
+.auth-content h2,
+.auth-content p,
+.auth-content label {
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.85);
+}
