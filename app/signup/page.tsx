@@ -94,7 +94,7 @@ export default function SignupPage() {
                   : 'text-gray-600 hover:text-emerald-950'
               }`}
             >
-              👨🏽‍🌾 Registered Farmer
+               Registered Farmer
             </button>
             <button
               type="button"
@@ -105,7 +105,7 @@ export default function SignupPage() {
                   : 'text-gray-600 hover:text-indigo-950'
               }`}
             >
-              🏢 Commercial Buyer
+               Commercial Buyer
             </button>
           </div>
 
@@ -228,7 +228,7 @@ export default function SignupPage() {
                         payoutMethod === 'bank' ? 'bg-emerald-900 text-white border-emerald-900 shadow-md' : 'bg-white text-gray-700'
                       }`}
                     >
-                      🏦 Jamaican Bank Account
+                       Jamaican Bank Account
                     </button>
                     <button
                       type="button"
@@ -237,7 +237,7 @@ export default function SignupPage() {
                         payoutMethod === 'lynk' ? 'bg-emerald-900 text-white border-emerald-900 shadow-md' : 'bg-white text-gray-700'
                       }`}
                     >
-                      📱 Lynk Wallet / JAM-DEX
+                       Lynk Wallet / JAM-DEX
                     </button>
                   </div>
 
@@ -339,7 +339,7 @@ export default function SignupPage() {
                         buyerPaymentPref === 'card' ? 'bg-indigo-900 text-white border-indigo-900 shadow-md' : 'bg-white text-gray-700'
                       }`}
                     >
-                      💳 Card Escrow
+                       Card Escrow
                     </button>
                     <button
                       type="button"
@@ -348,7 +348,7 @@ export default function SignupPage() {
                         buyerPaymentPref === 'lynk' ? 'bg-indigo-900 text-white border-indigo-900 shadow-md' : 'bg-white text-gray-700'
                       }`}
                     >
-                      📱 LynkBiz
+                       LynkBiz
                     </button>
                     <button
                       type="button"
@@ -357,7 +357,7 @@ export default function SignupPage() {
                         buyerPaymentPref === 'cash' ? 'bg-indigo-900 text-white border-indigo-900 shadow-md' : 'bg-white text-gray-700'
                       }`}
                     >
-                      💵 Cash/COD
+                       Cash/COD
                     </button>
                   </div>
                 </div>

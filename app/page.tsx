@@ -350,12 +350,12 @@ export default function HomePage() {
                     
                     <div className="bg-[#033b28] border border-[#065e41] p-4 rounded-3xl space-y-3">
                       <div className="flex justify-between items-center text-xs font-black">
-                        <span className="text-[#ccff00] flex items-center gap-1">📍 ST. ELIZABETH BLOCK #4</span>
+                        <span className="text-[#ccff00] flex items-center gap-1"> ST. ELIZABETH BLOCK #4</span>
                         <span className="text-[#ccff00] uppercase text-[10px]">LIVE</span>
                       </div>
 
                       <div className="bg-[#022c1e] border border-[#044c34] rounded-2xl p-4 text-center space-y-1">
-                        <div className="text-3xl my-1">🗺️</div>
+                        <div className="text-3xl my-1"></div>
                         <p className="font-black text-sm text-white">Sweet Pepper Soil Map</p>
                         <p className="text-[11px] font-extrabold text-[#22c55e]">Moisture Index: 34% (Optimal)</p>
                       </div>
