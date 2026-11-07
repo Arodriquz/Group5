@@ -1,0 +1,390 @@
+@reference "tailwindcss";
+
+/* =========================================================================
+   HOME PAGE STYLES  (all styling lives here; page.tsx only has markup/logic)
+   ========================================================================= */
+
+/* ---------- Page shell ---------- */
+.page {
+  @apply min-h-screen bg-[#f8faf9] text-gray-900 flex flex-col font-sans w-full overflow-x-hidden;
+}
+.main {
+  @apply flex-1 w-full space-y-16 pb-16;
+}
+
+/* ---------- Header ---------- */
+.header {
+  @apply sticky top-0 z-50 bg-white border-b border-gray-200 shadow-xs w-full;
+}
+.header-inner {
+  @apply w-full px-4 sm:px-6 xl:px-8 min-h-[88px] sm:min-h-[100px] xl:h-[120px] flex items-center justify-between gap-3 sm:gap-6 py-2;
+}
+.brand {
+  @apply flex flex-col items-start gap-1 cursor-pointer min-w-0;
+}
+.brand-logo-box {
+  @apply flex items-center justify-start overflow-visible;
+}
+.brand-logo {
+  @apply object-contain shrink-0 max-w-none w-auto h-11 sm:h-14 xl:h-16;
+}
+.brand-tagline {
+  @apply text-[10px] sm:text-xs xl:text-sm font-black text-emerald-800 uppercase tracking-wider leading-tight whitespace-normal sm:whitespace-nowrap;
+}
+
+/* ---------- Desktop navigation (xl and up) ---------- */
+.main-nav {
+  @apply hidden xl:flex items-center justify-center gap-8 text-base font-bold text-gray-800 whitespace-nowrap flex-1 px-4;
+}
+.nav-item {
+  @apply relative;
+}
+.nav-button {
+  @apply hover:text-emerald-700 flex items-center gap-1.5 py-2 transition-colors cursor-pointer text-base font-extrabold;
+}
+.nav-arrow {
+  @apply text-xs text-gray-400;
+}
+.nav-link {
+  @apply hover:text-emerald-700 transition-colors cursor-pointer whitespace-nowrap text-base font-extrabold;
+}
+.dropdown {
+  @apply absolute top-full left-0 w-64 bg-white border border-gray-200 shadow-xl rounded-2xl p-2 space-y-1 mt-2 z-50;
+}
+.dropdown-wide {
+  @apply w-72;
+}
+.dropdown-link {
+  @apply p-3 rounded-xl hover:bg-emerald-50 text-sm font-bold text-gray-800 cursor-pointer;
+}
+.dropdown-rich {
+  @apply w-full text-left p-3 rounded-xl hover:bg-emerald-50 transition-colors cursor-pointer;
+}
+.dropdown-rich-title {
+  @apply font-extrabold text-sm text-emerald-950;
+}
+.dropdown-rich-desc {
+  @apply text-xs text-gray-500 font-normal;
+}
+
+/* ---------- Header buttons (scale with screen size) ---------- */
+.header-actions {
+  @apply flex items-center gap-2 sm:gap-4 shrink-0;
+}
+.login-link {
+  @apply hidden sm:inline-block text-sm sm:text-base font-extrabold text-gray-800 hover:text-emerald-700 px-2 sm:px-3 py-2 transition-colors cursor-pointer whitespace-nowrap;
+}
+.signup-button {
+  @apply inline-block bg-[#ccff00] hover:bg-[#b8e600] text-emerald-950 font-black text-sm sm:text-base px-3 sm:px-6 py-2 sm:py-3 rounded-xl shadow-xs transition-all hover:scale-105 border border-lime-400 cursor-pointer whitespace-nowrap;
+}
+
+/* ---------- Hamburger + mobile menu (below xl) ---------- */
+.hamburger {
+  @apply flex xl:hidden items-center justify-center w-11 h-11 rounded-xl border border-gray-200 text-2xl text-gray-800 hover:bg-emerald-50 transition-colors cursor-pointer;
+}
+.mobile-menu {
+  @apply xl:hidden border-t border-gray-200 bg-white px-4 sm:px-6 py-3 max-h-[calc(100vh-88px)] overflow-y-auto;
+}
+.mobile-group-button {
+  @apply w-full flex items-center justify-between py-3 text-base font-extrabold text-gray-800 border-b border-gray-100 text-left cursor-pointer;
+}
+.mobile-sublist {
+  @apply py-1 pl-3 space-y-1;
+}
+.mobile-sublink {
+  @apply block w-full text-left p-3 rounded-xl hover:bg-emerald-50 text-sm font-bold text-gray-800 cursor-pointer;
+}
+.mobile-sublink-desc {
+  @apply block text-xs text-gray-500 font-normal;
+}
+.mobile-login {
+  @apply sm:hidden block w-full py-3 text-base font-extrabold text-emerald-700;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  @apply bg-[#044c34] text-white w-full py-8 shadow-md;
+}
+.hero-inner {
+  @apply max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center;
+}
+.hero-left {
+  @apply lg:col-span-8 flex flex-col justify-center space-y-4;
+}
+.hero-badge {
+  @apply bg-emerald-700/80 text-emerald-200 text-xs font-black uppercase px-3 py-1 rounded-full border border-emerald-600 inline-block;
+}
+.hero-title {
+  @apply text-4xl sm:text-6xl font-black leading-tight tracking-tight;
+}
+.hero-subtitle {
+  @apply text-emerald-100 text-sm sm:text-base font-medium leading-relaxed max-w-2xl;
+}
+.hero-actions {
+  @apply flex flex-wrap gap-4 pt-2;
+}
+.btn-primary {
+  @apply bg-[#ccff00] text-emerald-950 font-black px-7 py-3.5 rounded-xl shadow-md hover:bg-lime-400 transition-all cursor-pointer;
+}
+.btn-secondary {
+  @apply bg-white/10 hover:bg-white/20 text-white font-bold px-7 py-3.5 rounded-xl border border-white/20 transition-all cursor-pointer;
+}
+.hero-right {
+  @apply lg:col-span-4 flex flex-col gap-2.5 justify-center w-full max-w-sm;
+}
+
+/* ---------- Hero cards (weather + stats) ---------- */
+.glass-card {
+  @apply bg-white/10 border border-white/20 px-4 py-3 rounded-xl backdrop-blur-md space-y-1.5;
+}
+.weather-header {
+  @apply flex items-center justify-between border-b border-white/15 pb-1;
+}
+.weather-location {
+  @apply font-extrabold text-sm text-white flex items-center gap-1.5;
+}
+.live-badge {
+  @apply text-[10px] bg-[#ccff00] text-emerald-950 font-black px-2 py-0.5 rounded-full uppercase tracking-wide;
+}
+.weather-main {
+  @apply flex items-center justify-between py-0.5;
+}
+.weather-temp {
+  @apply text-3xl font-black text-white leading-none;
+}
+.weather-condition {
+  @apply text-xs font-bold text-lime-300 mt-1;
+}
+.weather-icon {
+  @apply text-3xl;
+}
+.weather-stats {
+  @apply flex items-center justify-between pt-1 border-t border-white/15 text-xs font-black text-emerald-100;
+}
+.weather-stat {
+  @apply flex items-center gap-1;
+}
+.stat-row {
+  @apply flex justify-between items-center text-sm;
+}
+.stat-label {
+  @apply text-emerald-100 font-extrabold;
+}
+.stat-value {
+  @apply font-black text-white text-base;
+}
+.stat-value-accent {
+  @apply font-black text-[#ccff00] text-base;
+}
+
+/* ---------- Shared section styles ---------- */
+.section {
+  @apply max-w-7xl mx-auto px-6 space-y-6;
+}
+.section-spoke {
+  @apply max-w-7xl mx-auto px-6 space-y-12 py-6;
+}
+.section-heading-center {
+  @apply text-center max-w-3xl mx-auto space-y-3;
+}
+.section-heading-small {
+  @apply text-center max-w-xl mx-auto space-y-2;
+}
+.eyebrow {
+  @apply text-xs font-black text-emerald-700 uppercase tracking-widest;
+}
+.eyebrow-tight {
+  @apply text-xs font-black text-emerald-700 uppercase tracking-wider;
+}
+.section-title-lg {
+  @apply text-3xl sm:text-5xl font-black text-emerald-950;
+}
+.section-title {
+  @apply text-2xl sm:text-3xl font-black text-emerald-950;
+}
+.section-intro {
+  @apply text-sm text-gray-600 font-medium;
+}
+
+/* ---------- Spoke diagram ---------- */
+.spoke-grid {
+  @apply grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-4;
+}
+.spoke-column {
+  @apply lg:col-span-4 space-y-6;
+}
+.spoke-card {
+  @apply bg-white p-5 rounded-2xl border border-gray-200 shadow-xs flex items-center justify-between gap-4 hover:border-emerald-500 transition-all;
+}
+.spoke-text {
+  @apply space-y-1;
+}
+.spoke-text-right {
+  @apply space-y-1 text-right;
+}
+.spoke-title {
+  @apply font-black text-base text-emerald-950;
+}
+.spoke-tag {
+  @apply text-[10px] font-black text-emerald-700 uppercase tracking-wider;
+}
+.spoke-desc {
+  @apply text-xs text-gray-500 leading-relaxed font-medium;
+}
+.spoke-icon {
+  @apply w-20 h-20 rounded-xl shrink-0 flex items-center justify-center text-3xl;
+}
+.icon-emerald {
+  @apply bg-emerald-100;
+}
+.icon-sky {
+  @apply bg-sky-100;
+}
+.icon-blue {
+  @apply bg-blue-100;
+}
+.icon-amber {
+  @apply bg-amber-100;
+}
+.icon-purple {
+  @apply bg-purple-100;
+}
+
+/* ---------- Phone mockup ---------- */
+.phone-wrap {
+  @apply lg:col-span-4 flex justify-center py-4;
+}
+.phone {
+  @apply w-[300px] bg-[#022c1e] p-5 rounded-[40px] border-4 border-[#011e14] shadow-2xl space-y-4 text-white;
+}
+.phone-notch {
+  @apply w-24 h-3.5 bg-[#044c34] mx-auto rounded-full;
+}
+.phone-panel {
+  @apply bg-[#033b28] border border-[#065e41] p-4 rounded-3xl space-y-3;
+}
+.phone-panel-header {
+  @apply flex justify-between items-center text-xs font-black;
+}
+.phone-block-name {
+  @apply text-[#ccff00] flex items-center gap-1;
+}
+.phone-live {
+  @apply text-[#ccff00] uppercase text-[10px];
+}
+.phone-map {
+  @apply bg-[#022c1e] border border-[#044c34] rounded-2xl p-4 text-center space-y-1;
+}
+.phone-map-icon {
+  @apply text-3xl my-1;
+}
+.phone-map-title {
+  @apply font-black text-sm text-white;
+}
+.phone-map-status {
+  @apply text-[11px] font-extrabold text-[#22c55e];
+}
+.phone-row {
+  @apply bg-[#033b28] border border-[#065e41] px-4 py-3 rounded-2xl flex justify-between items-center text-sm font-extrabold;
+}
+.phone-row-label {
+  @apply text-white;
+}
+.phone-ready-badge {
+  @apply bg-[#ccff00] text-emerald-950 text-xs font-black px-2.5 py-1 rounded-md uppercase;
+}
+.phone-price {
+  @apply text-[#ccff00] font-black text-base;
+}
+.phone-cta {
+  @apply block text-center w-full bg-[#ccff00] hover:bg-lime-400 text-emerald-950 font-black text-xs py-3.5 rounded-2xl transition-all cursor-pointer shadow-md;
+}
+
+/* ---------- How it works ---------- */
+.steps-grid {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-6;
+}
+.step-card {
+  @apply bg-white p-6 rounded-2xl border border-gray-200 shadow-xs relative;
+}
+.step-number {
+  @apply text-4xl font-black text-emerald-100 absolute top-4 right-4;
+}
+.step-title {
+  @apply font-black text-base text-emerald-950 mt-2;
+}
+.step-desc {
+  @apply text-xs text-gray-600 font-medium mt-2 leading-relaxed;
+}
+
+/* ---------- Trust banner ---------- */
+.trust {
+  @apply bg-emerald-50 border-y border-emerald-200 w-full py-8;
+}
+.trust-inner {
+  @apply max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6;
+}
+.trust-text {
+  @apply space-y-1 max-w-2xl;
+}
+.trust-badge {
+  @apply bg-emerald-200 text-emerald-900 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md;
+}
+.trust-title {
+  @apply text-lg font-black text-emerald-950;
+}
+.trust-desc {
+  @apply text-xs text-emerald-800 font-medium leading-relaxed;
+}
+.trust-pills {
+  @apply flex flex-wrap gap-3 shrink-0;
+}
+.trust-pill {
+  @apply bg-white border border-emerald-200 text-emerald-900 font-extrabold text-xs px-4 py-2 rounded-xl shadow-xs;
+}
+
+/* ---------- Marketplace teaser ---------- */
+.teaser-header {
+  @apply flex justify-between items-end border-b border-gray-200 pb-3;
+}
+.teaser-title {
+  @apply text-2xl font-black text-emerald-950;
+}
+.teaser-link {
+  @apply text-xs font-black text-emerald-700 hover:underline;
+}
+.listing-card {
+  @apply bg-white p-6 rounded-2xl border border-gray-200 shadow-xs space-y-3;
+}
+.listing-badge {
+  @apply text-[10px] font-black bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full uppercase;
+}
+.listing-name {
+  @apply font-black text-base text-gray-900;
+}
+.listing-qty {
+  @apply text-xs text-gray-500 font-medium;
+}
+.listing-price-row {
+  @apply flex justify-between items-center text-xs font-black border-t pt-3;
+}
+.listing-price-label {
+  @apply text-gray-400;
+}
+.listing-price {
+  @apply text-emerald-700 text-sm;
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  @apply w-full bg-emerald-950 text-white border-t border-emerald-900 py-6;
+}
+.footer-inner {
+  @apply max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center text-xs font-bold gap-4;
+}
+.footer-links {
+  @apply flex gap-6 text-emerald-200;
+}
+.footer-link {
+  @apply hover:text-white;
+}
