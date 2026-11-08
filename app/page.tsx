@@ -1,9 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import './home.css';
 import { useWeather } from './useWeather';
+import { useTheme } from './useTheme';
+
+
 
 export default function HomePage() {
   // =========================================================================
@@ -26,8 +29,21 @@ export default function HomePage() {
     setMobileSection(null);
   };
 
+  //Tracks whether the page has been scrolled (for the transparent header)
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   // Weather logic lives in useWeather.ts
   const weather = useWeather();
+
+  // Light/dark mode logic lives in useTheme.ts
+  const { theme, toggleTheme } = useTheme();
 
   const toggleDropdown = (menu: string) => {
     setOpenDropdown(openDropdown === menu ? null : menu);
@@ -43,8 +59,7 @@ export default function HomePage() {
 
       {/* ========================================================================= */}
       {/* HEADER / NAVIGATION BAR                                                   */}
-      {/* ========================================================================= */}
-      <header className="header">
+        <header className={`header ${scrolled || mobileOpen || activeTab !== 'home' ? 'header-scrolled' : ''}`}>
         <div className="header-inner">
 
           {/* LOGO & TAGLINE SECTION */}
@@ -140,11 +155,22 @@ export default function HomePage() {
           {/* RIGHT CTA BUTTONS */}
           <div className="header-actions">
             <Link className="login-link" href="/login">
+              <span className="login-icon" aria-hidden="true"></span>
               Log In
             </Link>
             <Link className="signup-button" href="/signup">
-              Sign Up →
+              Sign Up
             </Link>
+
+            {/* LIGHT / DARK MODE TOGGLE */}
+            <button
+              className="theme-toggle"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
+
             <button
               className="hamburger"
               aria-label="Toggle menu"

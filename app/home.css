@@ -12,9 +12,10 @@
   @apply flex-1 w-full space-y-16 pb-16;
 }
 
-/* ---------- Header ---------- */
+/* ---------- Header (fixed, so the hero photo runs behind it) ---------- */
 .header {
-  @apply sticky top-0 z-50 bg-white border-b border-gray-200 shadow-xs w-full;
+  @apply fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-xs w-full;
+  transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 .header-inner {
   @apply w-full px-4 sm:px-6 xl:px-8 min-h-[88px] sm:min-h-[100px] xl:h-[120px] flex items-center justify-between gap-3 sm:gap-6 py-2;
@@ -29,24 +30,24 @@
   @apply object-contain shrink-0 max-w-none w-auto h-11 sm:h-14 xl:h-16;
 }
 .brand-tagline {
-  @apply text-[10px] sm:text-xs xl:text-sm font-black text-emerald-800 uppercase tracking-wider leading-tight whitespace-normal sm:whitespace-nowrap;
+  @apply text-[9px] sm:text-[10px] xl:text-xs font-black text-emerald-800 uppercase tracking-wider leading-tight whitespace-normal sm:whitespace-nowrap;
 }
 
 /* ---------- Desktop navigation (xl and up) ---------- */
 .main-nav {
-  @apply hidden xl:flex items-center justify-center gap-8 text-base font-bold text-gray-800 whitespace-nowrap flex-1 px-4;
+  @apply hidden xl:flex items-center justify-center gap-6 text-sm font-bold text-gray-800 whitespace-nowrap flex-1 px-4;
 }
 .nav-item {
   @apply relative;
 }
 .nav-button {
-  @apply hover:text-emerald-700 flex items-center gap-1.5 py-2 transition-colors cursor-pointer text-base font-extrabold;
+  @apply hover:text-emerald-700 flex items-center gap-1.5 py-2 transition-colors cursor-pointer text-sm font-extrabold;
 }
 .nav-arrow {
   @apply text-xs text-gray-400;
 }
 .nav-link {
-  @apply hover:text-emerald-700 transition-colors cursor-pointer whitespace-nowrap text-base font-extrabold;
+  @apply hover:text-emerald-700 transition-colors cursor-pointer whitespace-nowrap text-sm font-extrabold;
 }
 .dropdown {
   @apply absolute top-full left-0 w-64 bg-white border border-gray-200 shadow-xl rounded-2xl p-2 space-y-1 mt-2 z-50;
@@ -72,10 +73,24 @@
   @apply flex items-center gap-2 sm:gap-4 shrink-0;
 }
 .login-link {
-  @apply hidden sm:inline-block text-sm sm:text-base font-extrabold text-gray-800 hover:text-emerald-700 px-2 sm:px-3 py-2 transition-colors cursor-pointer whitespace-nowrap;
+  @apply hidden sm:inline-flex items-center gap-2 text-sm font-extrabold text-gray-800 hover:text-emerald-700 px-2 sm:px-3 py-2 transition-colors cursor-pointer whitespace-nowrap;
 }
+
+.login-icon {
+  display: inline-block;
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask: url('/images/login.png') center / contain no-repeat;
+  mask: url('/images/login.png') center / contain no-repeat;
+}
+
 .signup-button {
   @apply inline-block bg-[#ccff00] hover:bg-[#b8e600] text-emerald-950 font-black text-sm sm:text-base px-3 sm:px-6 py-2 sm:py-3 rounded-xl shadow-xs transition-all hover:scale-105 border border-lime-400 cursor-pointer whitespace-nowrap;
+}
+.theme-toggle {
+  @apply flex items-center justify-center w-11 h-11 rounded-xl border border-gray-200 text-xl hover:bg-emerald-50 transition-colors cursor-pointer;
 }
 
 /* ---------- Hamburger + mobile menu (below xl) ---------- */
@@ -103,13 +118,74 @@
 
 /* ---------- Hero ---------- */
 .hero {
-  @apply bg-[#044c34] text-white w-full py-8 shadow-md;
+  --header-h: 88px;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding-top: var(--header-h);
+  padding-bottom: 0;
+  color: #fff;
+  overflow: hidden;
 }
+@media (min-width: 640px) {
+  .hero { --header-h: 100px; }
+}
+@media (min-width: 1280px) {
+  .hero { --header-h: 120px; }
+}
+
+/* Background layer: photo + light black overlay, faded out at the bottom */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url('/images/landing_page.jpg') center / cover no-repeat,
+    #000;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 94%,
+    rgba(0, 0, 0, 0.6) 96.5%,
+    rgba(0, 0, 0, 0.25) 98.5%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 94%,
+    rgba(0, 0, 0, 0.6) 96.5%,
+    rgba(0, 0, 0, 0.25) 98.5%,
+    transparent 100%
+  );
+}
+
+/* Content is centered in the first screen, below the header */
 .hero-inner {
-  @apply max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center;
+  @apply max-w-7xl mx-auto px-6;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  text-align: center;
+  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100svh - var(--header-h));
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
 }
 .hero-left {
-  @apply lg:col-span-8 flex flex-col justify-center space-y-4;
+  @apply flex flex-col items-center space-y-4;
+  width: 100%;
+  max-width: 56rem;
 }
 .hero-badge {
   @apply bg-emerald-700/80 text-emerald-200 text-xs font-black uppercase px-3 py-1 rounded-full border border-emerald-600 inline-block;
@@ -118,24 +194,36 @@
   @apply text-4xl sm:text-6xl font-black leading-tight tracking-tight;
 }
 .hero-subtitle {
-  @apply text-emerald-100 text-sm sm:text-base font-medium leading-relaxed max-w-2xl;
+  @apply text-emerald-100 text-sm sm:text-base font-medium leading-relaxed max-w-2xl mx-auto;
 }
 .hero-actions {
-  @apply flex flex-wrap gap-4 pt-2;
+  @apply flex flex-wrap justify-center gap-4 pt-2;
 }
 .btn-primary {
   @apply bg-[#ccff00] text-emerald-950 font-black px-7 py-3.5 rounded-xl shadow-md hover:bg-lime-400 transition-all cursor-pointer;
 }
 .btn-secondary {
-  @apply bg-white/10 hover:bg-white/20 text-white font-bold px-7 py-3.5 rounded-xl border border-white/20 transition-all cursor-pointer;
+  @apply text-white font-bold px-7 py-3.5 rounded-xl transition-all cursor-pointer;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
-.hero-right {
-  @apply lg:col-span-4 flex flex-col gap-2.5 justify-center w-full max-w-sm;
+.btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.65);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
-/* ---------- Hero cards (weather + stats) ---------- */
+/* ---------- Hero cards (weather + stats), side by side ---------- */
+.hero-right {
+  @apply flex flex-row flex-wrap justify-center gap-4 w-full;
+  max-width: 52rem;
+}
 .glass-card {
-  @apply bg-white/10 border border-white/20 px-4 py-3 rounded-xl backdrop-blur-md space-y-1.5;
+  @apply border border-white/20 px-4 py-3 rounded-xl backdrop-blur-md space-y-1.5 text-left;
+  background: rgba(0, 0, 0, 0.5);
+  flex: 1 1 280px;
+  max-width: 24rem;
 }
 .weather-header {
   @apply flex items-center justify-between border-b border-white/15 pb-1;
@@ -387,4 +475,166 @@
 }
 .footer-link {
   @apply hover:text-white;
+}
+
+/* =========================================================================
+   DARK MODE (plain CSS)
+   ========================================================================= */
+[data-theme='dark'] { color-scheme: dark; }
+
+/* Page + header */
+[data-theme='dark'] .page { background: #0c1511; color: #f3f4f6; }
+[data-theme='dark'] .header { background: #111d18; border-color: #1f2937; }
+[data-theme='dark'] .brand-tagline { color: #6ee7b7; }
+[data-theme='dark'] .nav-button,
+[data-theme='dark'] .nav-link,
+[data-theme='dark'] .login-link { color: #f3f4f6; }
+[data-theme='dark'] .nav-button:hover,
+[data-theme='dark'] .nav-link:hover,
+[data-theme='dark'] .login-link:hover { color: #bef264; }
+[data-theme='dark'] .theme-toggle,
+[data-theme='dark'] .hamburger { border-color: #374151; color: #f3f4f6; }
+[data-theme='dark'] .theme-toggle:hover,
+[data-theme='dark'] .hamburger:hover { background: rgba(6, 78, 59, 0.4); }
+
+/* Dropdowns + mobile menu */
+[data-theme='dark'] .dropdown { background: #111d18; border-color: #374151; }
+[data-theme='dark'] .dropdown-link,
+[data-theme='dark'] .mobile-sublink { color: #f3f4f6; }
+[data-theme='dark'] .dropdown-link:hover,
+[data-theme='dark'] .dropdown-rich:hover,
+[data-theme='dark'] .mobile-sublink:hover { background: rgba(6, 78, 59, 0.4); }
+[data-theme='dark'] .dropdown-rich-title { color: #d1fae5; }
+[data-theme='dark'] .dropdown-rich-desc,
+[data-theme='dark'] .mobile-sublink-desc { color: #9ca3af; }
+[data-theme='dark'] .mobile-menu { background: #111d18; border-color: #1f2937; }
+[data-theme='dark'] .mobile-group-button { color: #f3f4f6; border-color: #1f2937; }
+[data-theme='dark'] .mobile-login { color: #bef264; }
+
+/* Section headings */
+[data-theme='dark'] .section-title-lg,
+[data-theme='dark'] .section-title,
+[data-theme='dark'] .teaser-title { color: #ecfdf5; }
+[data-theme='dark'] .section-intro { color: #9ca3af; }
+[data-theme='dark'] .eyebrow,
+[data-theme='dark'] .eyebrow-tight,
+[data-theme='dark'] .spoke-tag,
+[data-theme='dark'] .teaser-link { color: #bef264; }
+
+/* Cards */
+[data-theme='dark'] .spoke-card,
+[data-theme='dark'] .step-card,
+[data-theme='dark'] .listing-card { background: #111d18; border-color: #1f2937; }
+[data-theme='dark'] .spoke-card:hover { border-color: #10b981; }
+[data-theme='dark'] .spoke-title,
+[data-theme='dark'] .step-title,
+[data-theme='dark'] .listing-name { color: #ecfdf5; }
+[data-theme='dark'] .spoke-desc,
+[data-theme='dark'] .step-desc,
+[data-theme='dark'] .listing-qty { color: #9ca3af; }
+[data-theme='dark'] .step-number { color: #064e3b; }
+[data-theme='dark'] .listing-badge { background: rgba(6, 78, 59, 0.6); color: #a7f3d0; }
+[data-theme='dark'] .listing-price { color: #bef264; }
+[data-theme='dark'] .listing-price-label { color: #9ca3af; }
+[data-theme='dark'] .listing-price-row,
+[data-theme='dark'] .teaser-header { border-color: #1f2937; }
+
+/* Icon tiles */
+[data-theme='dark'] .icon-emerald { background: rgba(6, 78, 59, 0.5); }
+[data-theme='dark'] .icon-sky { background: rgba(12, 74, 110, 0.5); }
+[data-theme='dark'] .icon-blue { background: rgba(30, 58, 138, 0.5); }
+[data-theme='dark'] .icon-amber { background: rgba(120, 53, 15, 0.5); }
+[data-theme='dark'] .icon-purple { background: rgba(88, 28, 135, 0.5); }
+
+/* Trust banner */
+[data-theme='dark'] .trust { background: #022c22; border-color: #064e3b; }
+[data-theme='dark'] .trust-title { color: #ecfdf5; }
+[data-theme='dark'] .trust-desc { color: #a7f3d0; }
+[data-theme='dark'] .trust-pill { background: #111d18; border-color: #065f46; color: #d1fae5; }
+
+/* =========================================================================
+   TRANSPARENT HEADER OVER HERO
+   (must stay last, so it overrides the header + dark mode rules above)
+   ========================================================================= */
+
+/* At the top of the page: see-through, white text */
+.header:not(.header-scrolled) {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
+  border-bottom: 0;
+  border-color: transparent;
+  box-shadow: none !important;
+}
+.header:not(.header-scrolled) .brand-tagline,
+.header:not(.header-scrolled) .nav-button,
+.header:not(.header-scrolled) .nav-link,
+.header:not(.header-scrolled) .login-link,
+.header:not(.header-scrolled) .nav-arrow {
+  color: #fff;
+}
+.header:not(.header-scrolled) .nav-button:hover,
+.header:not(.header-scrolled) .nav-link:hover,
+.header:not(.header-scrolled) .login-link:hover {
+  color: #bef264;
+}
+.header:not(.header-scrolled) .theme-toggle,
+.header:not(.header-scrolled) .hamburger {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+.header:not(.header-scrolled) .theme-toggle:hover,
+.header:not(.header-scrolled) .hamburger:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Tagline: hidden at the top of the page, fades in once you scroll */
+.brand-tagline {
+  max-height: 2.5rem;
+  overflow: hidden;
+  transition: opacity 0.3s, max-height 0.3s, margin 0.3s;
+}
+.header:not(.header-scrolled) .brand-tagline {
+  opacity: 0;
+  max-height: 0;
+  margin-top: -4px; /* cancels the gap under the logo so it sits centered */
+}
+/* Make logo in header white at the top of the page, so it shows up against the hero photo */
+  .header:not(.header-scrolled) .brand-logo { filter: brightness(0) invert(1); }
+
+  /* =========================================================================
+   COMPACT HEADER AT TOP + TRULY CENTERED NAV
+   ========================================================================= */
+
+/* Smooth growth back to full size on scroll */
+.header-inner {
+  transition: min-height 0.3s, height 0.3s;
+}
+
+/* Smaller header container until the page is scrolled */
+.header:not(.header-scrolled) .header-inner {
+  min-height: 72px;
+}
+@media (min-width: 1280px) {
+  .header:not(.header-scrolled) .header-inner {
+    height: 84px;
+    min-height: 0;
+  }
+}
+
+/* Desktop: logo | menu | buttons, with the menu in the exact center */
+@media (min-width: 1280px) {
+  .header-inner {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+  }
+  .brand {
+    justify-self: start;
+  }
+  .header-actions {
+    justify-self: end;
+  }
+  .main-nav {
+    flex: none;
+    padding: 0;
+  }
 }
