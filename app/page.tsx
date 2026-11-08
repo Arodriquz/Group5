@@ -284,7 +284,7 @@ export default function HomePage() {
                   </p>
 
                   <div className="hero-actions">
-                    <Link className="btn-primary" href="/farmer-dashboard">
+                    <Link className="btn-primary" href="/login">
                       Launch Field Control
                     </Link>
 
@@ -421,7 +421,7 @@ export default function HomePage() {
                       <span className="phone-price">$380 JMD / lb</span>
                     </div>
 
-                    <Link className="phone-cta" href="/farmer-dashboard">
+                    <Link className="phone-cta" href="/login">
                       Open Live Control →
                     </Link>
 
