@@ -532,7 +532,6 @@
 [data-theme='dark'] .spoke-desc,
 [data-theme='dark'] .step-desc,
 [data-theme='dark'] .listing-qty { color: #9ca3af; }
-[data-theme='dark'] .step-number { color: #064e3b; }
 [data-theme='dark'] .listing-badge { background: rgba(6, 78, 59, 0.6); color: #a7f3d0; }
 [data-theme='dark'] .listing-price { color: #bef264; }
 [data-theme='dark'] .listing-price-label { color: #9ca3af; }
@@ -637,4 +636,31 @@
     flex: none;
     padding: 0;
   }
+}
+
+/* Remove the pill background on the "Getting Started" and "Market Demand" labels in dark mode */
+.dark-theme .eyebrow-tight {
+  background: transparent !important;
+  color: #34d399 !important; /* lighter emerald so the text stays readable on a dark background */
+}
+
+/* Step numbers (01, 02, 03) match the "Integrated Jamaican Telemetry" eyebrow color */
+.step-number {
+  @apply text-emerald-700;
+}
+
+/* Pill look for the section labels (light mode) */
+.eyebrow-pill {
+  @apply bg-emerald-100 px-3 py-0.5 rounded-full;
+}
+
+/* Dark mode: no pill */
+[data-theme='dark'] .eyebrow-pill,
+.dark-theme .eyebrow-pill {
+  background: transparent;
+}
+
+.dark-theme .step-number {
+  color: #bef264; /* same as .eyebrow in dark mode */
+  opacity: 0.5;   /* adjust to taste */
 }

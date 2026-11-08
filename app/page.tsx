@@ -515,7 +515,7 @@ export default function HomePage() {
             {/* PROCESS FLOW WITH TROPICAL JAMAICAN IMAGES */}
             <section className="section pt-6 pb-4">
               <div className="section-heading-small text-center mb-4">
-                <span className="eyebrow-tight text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-100 px-3 py-0.5 rounded-full">
+                <span className="eyebrow eyebrow-pill">
                   Getting Started
                 </span>
                 <h2 className="section-title text-2xl font-bold text-slate-900 mt-1">
@@ -625,7 +625,7 @@ export default function HomePage() {
             <section className="section pt-4 pb-8 max-w-7xl mx-auto px-6">
               <div className="teaser-header flex justify-between items-end mb-4">
                 <div>
-                  <span className="eyebrow-tight text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-100 px-3 py-0.5 rounded-full">
+                  <span className="eyebrow eyebrow-pill">
                     Market Demand
                   </span>
                   <h2 className="teaser-title text-2xl font-bold text-slate-900 mt-1">
