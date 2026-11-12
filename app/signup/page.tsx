@@ -52,7 +52,7 @@ export default function SignupPage() {
       return;
     }
 
-    router.push(role === 'farmer' ? '/farmer-dashboard' : '/buyer-dashboard');
+    router.push('/security');
   };
 
   return (
@@ -392,7 +392,7 @@ export default function SignupPage() {
               disabled={loading}
               className="w-full bg-[#ccff00] hover:bg-lime-400 text-emerald-950 font-black text-sm sm:text-base py-4 rounded-2xl border border-lime-400 shadow-xl transition-all cursor-pointer hover:scale-[1.01] active:scale-[0.99] mt-3"
             >
-              Complete Registration & Access {role === 'farmer' ? 'Field Control' : 'Marketplace'} →
+              Create Account & Set Up Security → {role === 'farmer' ? 'Field Control' : 'Marketplace'} →
             </button>
 
           </form>
