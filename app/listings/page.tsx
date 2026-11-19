@@ -4,13 +4,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
+import { useOrders } from '@/lib/orders';
 
 // Dark mode shows this logo tinted #FED100 (CSS mask, needs a transparent background).
 // Light mode shows LOGO_LIGHT as-is; point it at your full-colour logo if logo.png is the white one.
 const LOGO_DARK = '/images/logo.png';
 const LOGO_LIGHT = '/images/logo.png';
 
-// Where the "Back to Dashboard" link goes for each role. Adjust to your real routes.
 const DASHBOARD_BY_ROLE: Record<string, string> = {
   buyer: '/buyer-dashboard',
   farmer: '/farmer-dashboard',
@@ -27,7 +27,7 @@ type Listing = {
   emoji: string; tint: [string, string]; photo?: string;
 };
 
-// Mock data: replace with a fetch from your database.
+// Mock data: replace with fetch from database.
 const LISTINGS: Listing[] = [
   { id: 101, farmer: 'Marcus Reid', radaId: '#84920', parish: 'St. Elizabeth', crop: 'Sweet Pepper', totalAvailableLbs: 1500, price: 380, grade: 'Grade A', delivery: 'Farm Gate Pickup', emoji: '🫑', tint: ['#2f4a1a', '#5b8a2e'], photo: 'https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?w=500&auto=format&fit=crop&q=60' },
   { id: 102, farmer: 'Devon Campbell', radaId: '#39201', parish: 'Manchester', crop: 'Irish Potato', totalAvailableLbs: 3000, price: 210, grade: 'Grade A', delivery: 'Refrigerated Truck', emoji: '🥔', tint: ['#5a4a22', '#a58a45'], photo: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500&auto=format&fit=crop&q=60' },
@@ -62,6 +62,7 @@ const toISODate = (d: Date) =>
 
 export default function ListingsPage() {
   const router = useRouter();
+  const { addOrder } = useOrders();
   const { data: session } = authClient.useSession();
   const role = (session?.user as { role?: string } | undefined)?.role;
   const isBuyer = role === 'buyer';
@@ -89,9 +90,22 @@ export default function ListingsPage() {
   ), [searchCrop, selectedParish]);
 
   const handlePlaceOrder = (order: OrderRequest) => {
-    // TODO: persist the order (API route or server action), reduce the listing's available lbs,
-    // and start the chosen payment flow (escrow hold, COD record, or LynkBiz).
-    console.log('Order request', order);
+    const listing = LISTINGS.find((l) => l.id === order.listingId);
+    if (!listing) return;
+    addOrder({
+      id: Date.now(),
+      buyerId: session?.user?.id ?? 'unknown',
+      buyerName: session?.user?.name ?? 'Buyer',
+      farmer: listing.farmer,
+      crop: listing.crop,
+      quantityLbs: order.quantityLbs,
+      total: order.quantityLbs * listing.price,
+      paymentMethod: PAY_OPTIONS.find((p) => p.id === order.paymentMethod)?.label ?? order.paymentMethod,
+      status: 'AWAITING FARMER',
+      placedOn: toISODate(new Date()),
+      deliveryDate: order.deliveryDate,
+      deliveryLocation: order.deliveryLocation,
+    });
     setSelected(null);
     router.push(dashboardHref);
   };

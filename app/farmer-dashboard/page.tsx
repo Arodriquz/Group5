@@ -1,12 +1,16 @@
 'use client';
 
 import './dashboard.css';
-import React, { useState } from 'react';
+import './fd-extras.css';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
 import { useDashboard } from './useDashboard';
 import { GATEWAYS, METRIC_LABELS, TREND_TIMES } from './data';
+import { useOrders } from '@/lib/orders';
+import OrdersTab from './OrdersTab';
+import FieldAlertDialog, { MOISTURE_LOW, TEMP_HIGH } from './FieldAlertDialog';
 
 type Grade = 'A' | 'B' | 'C';
 
@@ -54,13 +58,29 @@ export default function FarmerDashboardPage() {
     router.push('/login');
   };
 
-  const [activeTab, setActiveTab] = useState<'harvest' | 'loss' | 'marketplace'>('harvest');
+  const [activeTab, setActiveTab] = useState<'harvest' | 'loss' | 'marketplace' | 'orders'>('harvest');
 
+  // Orders (shared front-end store, also used by the listings and buyer pages)
+  const { orders, updateOrder } = useOrders();
+  const awaitingCount = orders.filter((o) => o.status === 'AWAITING FARMER').length;
+
+  // Field alert: shown as a pop-up for the selected sensor
   const moisture = parseInt(sensor.m[0][0]);
   const temp = parseInt(sensor.m[1][0]);
-  const alertNeeded = moisture < 35 || temp > 30;
+  const alertNeeded = moisture < MOISTURE_LOW || temp > TEMP_HIGH;
 
-  // Farmer Payout Settings State (kept from your original page)
+  const [dismissedAlerts, setDismissedAlerts] = useState<string[]>([]);
+  const alertDismissed = dismissedAlerts.includes(sensor.id);
+  const showAlert = alertNeeded && !alertDismissed;
+  const dismissAlert = () => setDismissedAlerts((p) => (p.includes(sensor.id) ? p : [...p, sensor.id]));
+  const reopenAlert = () => setDismissedAlerts((p) => p.filter((id) => id !== sensor.id));
+
+  // Once a sensor is healthy again, forget the dismissal so the next problem pops up fresh.
+  useEffect(() => {
+    if (!alertNeeded) setDismissedAlerts((p) => (p.includes(sensor.id) ? p.filter((id) => id !== sensor.id) : p));
+  }, [alertNeeded, sensor.id]);
+
+  // Farmer Payout Settings State 
   const [payoutSettings, setPayoutSettings] = useState({ bankName: 'National Commercial Bank (NCB)', accountNumber: '••••••••8492', accountType: 'Savings' });
 
   // Produce Photo Uploader
@@ -132,25 +152,14 @@ export default function FarmerDashboardPage() {
       </header>
 
       <main className="fd-main">
-        {/* GREETING + ALERT */}
+        {/* GREETING + VIEW LISTINGS */}
         <div className="fd-flex fd-between" style={{ alignItems: 'flex-end' }}>
           <div>
             <div className="fd-lbl">{new Date().toLocaleDateString('en-JM', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
             <h1 className="fd-h1">Welcome, <span className="fd-ac">{name}</span></h1>
             <div style={{ color: 'var(--mu)', fontSize: 16 }}>Here is how your fields are doing today.</div>
           </div>
-          {alertNeeded && (
-            <div className="fd-alert">
-              <div style={{ maxWidth: 380 }}>
-                <div style={{ fontWeight: 800, fontSize: 13, letterSpacing: '.08em', color: 'var(--wn)' }}>FIELD ALERT: ACTION REQUIRED</div>
-                <div style={{ fontSize: 14, marginTop: 2 }}>
-                  {moisture < 35 && `Soil moisture low (${moisture}%). `}
-                  {temp > 30 && `Soil temp high (${temp}°C).`}
-                </div>
-              </div>
-              <button type="button" className="fd-btn fd-lime" onClick={d.hydrate}>Trigger Drip Valve</button>
-            </div>
-          )}
+          <Link href="/listings" className="fd-btn fd-lime fd-linkbtn">View Listings →</Link>
         </div>
 
         <div className="fd-row">
@@ -190,6 +199,9 @@ export default function FarmerDashboardPage() {
                   <div style={{ fontSize: 22, fontWeight: 700, marginTop: 10 }}>{sensor.name}</div>
                 </div>
                 <div className="fd-flex" style={{ gap: 8 }}>
+                  {alertNeeded && alertDismissed && (
+                    <button type="button" className="fd-btn fd-alert-badge" onClick={reopenAlert}>⚠ Field alert</button>
+                  )}
                   <span className="fd-chip" style={{ background: 'var(--okbg)', color: 'var(--ok)', textTransform: 'uppercase', letterSpacing: '.06em', fontSize: 12 }}>
                     <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--ok)' }} />Live probing
                   </span>
@@ -291,11 +303,13 @@ export default function FarmerDashboardPage() {
           </aside>
         </div>
 
-        {/* FIELD HUB: 3 TABS */}
+        {/* FIELD HUB: 4 TABS */}
         <section className="fd-glass" style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
           <div className="fd-flex" style={{ gap: 10 }}>
-            {([['harvest', 'Log Harvest Calendar'], ['loss', 'Report Crop Loss'], ['marketplace', 'Produce Marketplace']] as const).map(([k, label]) => (
-              <button key={k} type="button" className="fd-tab" aria-pressed={activeTab === k} onClick={() => setActiveTab(k)}>{label}</button>
+            {([['harvest', 'Log Harvest Calendar'], ['loss', 'Report Crop Loss'], ['marketplace', 'Produce Marketplace'], ['orders', 'Orders']] as const).map(([k, label]) => (
+              <button key={k} type="button" className="fd-tab" aria-pressed={activeTab === k} onClick={() => setActiveTab(k)}>
+                {label}{k === 'orders' && awaitingCount > 0 && <span className="fd-count">{awaitingCount}</span>}
+              </button>
             ))}
           </div>
 
@@ -415,10 +429,25 @@ export default function FarmerDashboardPage() {
               </div>
             </div>
           )}
+
+          {/* TAB 4: ORDERS */}
+          {activeTab === 'orders' && <OrdersTab orders={orders} onUpdate={updateOrder} />}
         </section>
 
         <footer style={{ fontSize: 13, color: 'var(--mu)', textAlign: 'center' }}>© 2026 Agri-Connect JA. All Rights Reserved.</footer>
       </main>
+
+      {/* FIELD ALERT POP-UP */}
+      {showAlert && (
+        <FieldAlertDialog
+          sensorId={sensor.id}
+          sensorName={sensor.name}
+          moisture={moisture}
+          temp={temp}
+          onTriggerValve={() => { d.hydrate(); dismissAlert(); }}
+          onDismiss={dismissAlert}
+        />
+      )}
 
       {/* DELETE CONFIRMATION POP-UP */}
       {pending && (

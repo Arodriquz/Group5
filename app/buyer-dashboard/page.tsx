@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
+import { formatDate, useOrders } from '@/lib/orders';
 
 // Dark mode shows this logo tinted #FED100 
 // Light mode shows LOGO_LIGHT as-is. If /images/logo.png is the all-white version,
@@ -11,23 +12,13 @@ import { authClient } from '@/lib/auth-client';
 const LOGO_DARK = '/images/logo.png';
 const LOGO_LIGHT = '/images/logo.png';
 
-type BuyerOrder = {
-  id: number; crop: string; farmer: string; quantityBought: string; totalCost: string;
-  paymentMethod: string; status: string; date: string;
-};
-
-// Statuses: 'PAID - IN TRANSIT' | 'OUT FOR DELIVERY' | 'AWAITING FARMER' | 'RECEIVED'
-const initialOrders: BuyerOrder[] = [
-  { id: 901, crop: 'Scotch Bonnet Pepper', farmer: 'Keneisha Sterling', quantityBought: '500 lbs', totalCost: 'JMD $190,000', paymentMethod: 'Card (Escrow Locked)', status: 'PAID - IN TRANSIT', date: '2026-11-02' },
-  { id: 902, crop: 'Sweet Pepper', farmer: 'Marcus Reid', quantityBought: '300 lbs', totalCost: 'JMD $114,000', paymentMethod: 'Cash on Delivery', status: 'OUT FOR DELIVERY', date: '2026-11-05' },
-  { id: 903, crop: 'Irish Potato', farmer: 'Devon Campbell', quantityBought: '800 lbs', totalCost: 'JMD $168,000', paymentMethod: 'Card (Escrow Locked)', status: 'AWAITING FARMER', date: '2026-11-10' },
-];
+// Order statuses (set by the farmer, see lib/orders.ts):
+// 'AWAITING FARMER' | 'APPROVED' | 'PREPARING' | 'OUT FOR DELIVERY' | 'DELIVERED' | 'RECEIVED' | 'DECLINED'
 
 const money = (amount: number) => `JMD $${amount.toLocaleString('en-JM')}`;
-const amountOf = (order: BuyerOrder) => Number(order.totalCost.replace(/[^\d]/g, '')) || 0;
 const pillClass = (status: string) =>
-  status === 'RECEIVED' || status === 'PAID - IN TRANSIT' ? 'pill pill-green'
-    : status === 'OUT FOR DELIVERY' ? 'pill pill-gold' : 'pill pill-gray';
+  ['RECEIVED', 'DELIVERED', 'APPROVED'].includes(status) ? 'pill pill-green'
+    : ['PREPARING', 'OUT FOR DELIVERY'].includes(status) ? 'pill pill-gold' : 'pill pill-gray';
 
 export default function BuyerDashboardPage() {
   const router = useRouter();
@@ -37,7 +28,11 @@ export default function BuyerDashboardPage() {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [menuOpen, setMenuOpen] = useState(false);
   const [today, setToday] = useState('');
-  const [myOrders, setMyOrders] = useState<BuyerOrder[]>(initialOrders);
+
+  // Orders come from the shared store, so farmer approvals and delivery updates show up here.
+  const { orders, updateOrder } = useOrders();
+  const userId = session?.user?.id;
+  const myOrders = orders.filter(o => o.buyerId === 'seed' || o.buyerId === userId);
 
   // Set after mount so server and client markup match.
   useEffect(() => {
@@ -58,15 +53,13 @@ export default function BuyerDashboardPage() {
     router.push('/login');
   };
 
-  const pendingOrders = myOrders.filter(order => order.status !== 'RECEIVED');
-  const pendingValue = pendingOrders.reduce((sum, order) => sum + amountOf(order), 0);
+  const pendingOrders = myOrders.filter(order => order.status !== 'RECEIVED' && order.status !== 'DECLINED');
+  const pendingValue = pendingOrders.reduce((sum, order) => sum + order.total, 0);
   const escrowValue = pendingOrders
     .filter(order => order.paymentMethod.toLowerCase().includes('escrow'))
-    .reduce((sum, order) => sum + amountOf(order), 0);
+    .reduce((sum, order) => sum + order.total, 0);
 
-  const markReceived = (id: number) => {
-    setMyOrders(prev => prev.map(order => order.id === id ? { ...order, status: 'RECEIVED' } : order));
-  };
+  const markReceived = (id: number) => updateOrder(id, { status: 'RECEIVED' });
 
   return (
     <div className={`buyer-root min-h-screen font-sans ${theme === 'light' ? 'buyer-light' : ''}`}>
@@ -126,27 +119,36 @@ export default function BuyerDashboardPage() {
                 <p className="text-xs t-mu">Mark an order received once it arrives</p>
               </div>
               <div className="tbl-wrap overflow-x-auto rounded-xl">
-                <table className="tbl w-full min-w-[820px] text-left text-sm">
-                  <thead><tr>{['Crop', 'Farmer', 'Quantity', 'Total', 'Payment', 'Status', 'Action'].map(label => <th key={label} className="px-4 py-3.5 font-bold">{label}</th>)}</tr></thead>
+                <table className="tbl w-full min-w-[900px] text-left text-sm">
+                  <thead><tr>{['Crop', 'Farmer', 'Quantity', 'Total', 'Delivery', 'Payment', 'Status', 'Action'].map(label => <th key={label} className="px-4 py-3.5 font-bold">{label}</th>)}</tr></thead>
                   <tbody>
+                    {myOrders.length === 0 && (
+                      <tr><td colSpan={8} className="px-4 py-8 text-center t-mu">No orders yet. Browse the listings to place your first order.</td></tr>
+                    )}
                     {myOrders.map(order => {
                       const received = order.status === 'RECEIVED';
-                      const waiting = order.status === 'AWAITING FARMER';
+                      const declined = order.status === 'DECLINED';
+                      const canReceive = order.status === 'OUT FOR DELIVERY' || order.status === 'DELIVERED';
                       return (
                         <tr key={order.id}>
                           <td className="px-4 py-4 font-bold">{order.crop}</td>
                           <td className="px-4 py-4">{order.farmer}</td>
-                          <td className="px-4 py-4">{order.quantityBought}</td>
-                          <td className="px-4 py-4 font-extrabold t-ac">{order.totalCost.replace('JMD ', '')}</td>
+                          <td className="px-4 py-4">{order.quantityLbs.toLocaleString()} lbs</td>
+                          <td className="px-4 py-4 font-extrabold t-ac">{money(order.total).replace('JMD ', '')}</td>
+                          <td className="px-4 py-4 t-sub">{formatDate(order.deliveryDate)}</td>
                           <td className="px-4 py-4 t-sub">{order.paymentMethod}</td>
                           <td className="px-4 py-4"><span className={pillClass(order.status)}>{order.status}</span></td>
                           <td className="px-4 py-4">
                             {received ? (
                               <span className="font-bold t-ok">Received ✓</span>
-                            ) : waiting ? (
-                              <button type="button" disabled className="btn-ghost-disabled">Not yet shipped</button>
-                            ) : (
+                            ) : declined ? (
+                              <span className="font-bold t-mu">Declined</span>
+                            ) : canReceive ? (
                               <button type="button" onClick={() => markReceived(order.id)} className="btn-gold whitespace-nowrap px-4 py-2.5 text-sm">Mark as Received</button>
+                            ) : (
+                              <button type="button" disabled className="btn-ghost-disabled">
+                                {order.status === 'AWAITING FARMER' ? 'Awaiting approval' : 'Not yet shipped'}
+                              </button>
                             )}
                           </td>
                         </tr>
